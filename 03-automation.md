@@ -17,7 +17,7 @@ You need to automate them.
 
 You can run the current set of tests with `go test` in the `frontend` folder (there is no test file in the `backend` folder as of yet).
 
-Also if you get a `FAIL`, simply change the recommended line in `frontend/main.go`.
+Also if you get a `FAIL`, look at the error message and simply change the recommended line in `frontend/main.go`.
 
 Continuous Integration is the goal,
 and you look to your good old friend GitHub Actions for some needed support.
