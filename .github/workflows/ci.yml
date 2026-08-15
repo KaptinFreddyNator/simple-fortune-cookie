@@ -90,4 +90,3 @@ jobs:
       - name: Kubeconfig2
         run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
         run: kubectl --kubeconfig kubeconfig <your kubectl commands>
-```
