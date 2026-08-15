@@ -73,12 +73,16 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-      - name: Pull latest images
-        run: |
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:latest
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Run containers
+      - name: Set up kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Deploy to Kubernetes
         run: |
-          docker run -d --name backend -p 8081:8080 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:latest
-          docker run -d --name frontend -p 8080:8080 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
+          kubectl --kubeconfig kubeconfig apply -f k8s/backend-deployment.yaml
+          kubectl --kubeconfig kubeconfig apply -f k8s/frontend-deployment.yaml

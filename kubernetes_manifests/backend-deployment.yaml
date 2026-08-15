@@ -5,18 +5,19 @@ metadata:
 spec:
   selector:
     matchLabels:
-      run: backend
+      app: backend
   template:
     metadata:
       labels:
-        run: backend
+        app: backend
     spec:
       containers:
       - name: backend
         image: docker.io/9tailedninko/fortune-backend:latest
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
         ports:
-        - containerPort: 8081
+        - containerPort: 8080
