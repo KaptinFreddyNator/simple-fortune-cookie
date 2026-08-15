@@ -84,9 +84,11 @@ jobs:
           docker run -d --name frontend -p 8080:8080 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
       
       - name: Kubeconfig
-        run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
-        run: kubectl --kubeconfig kubeconfig <your kubectl commands>
+        run: 
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+          kubectl --kubeconfig kubeconfig <your kubectl commands>
 
       - name: Kubeconfig2
-        run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
-        run: kubectl --kubeconfig kubeconfig <your kubectl commands>
+        run: 
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+          kubectl --kubeconfig kubeconfig <your kubectl commands>
