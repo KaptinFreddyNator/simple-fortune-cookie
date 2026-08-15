@@ -2,9 +2,16 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME_BACKEND: 9tailedninko/fortune-backend
+  IMAGE_NAME_FRONTEND: 9tailedninko/fortune-frontend
 
 jobs:
   build-and-test:
@@ -26,3 +33,52 @@ jobs:
       - name: Run tests
         working-directory: frontend
         run: go test
+  
+  build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:latest
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
+  
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.even_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Pull latest images
+        run:
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:latest
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
+
+      - name: Run containers
+        run:
+          docker run -d --name backend -p 8081:8080 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:latest
+          docker run -d --name frontend -p 8080:8080 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
