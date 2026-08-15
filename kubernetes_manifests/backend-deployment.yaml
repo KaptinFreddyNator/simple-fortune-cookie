@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  selector:
+    matchLabels:
+      run: backend
+  template:
+    metadata:
+      labels:
+        run: backend
+    spec:
+      containers:
+      - name: backend
+        image: docker.io/9tailedninko/fortune-backend
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8081
