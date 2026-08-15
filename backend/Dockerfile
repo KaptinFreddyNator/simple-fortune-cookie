@@ -2,19 +2,19 @@ FROM golang:1.16 AS builder
 
 WORKDIR /app
 
-COPY go.mod ./
+COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -o frontend .
+RUN CGO_ENABLED=0 go build -o backend .
 
 FROM alpine:3.22
 
 WORKDIR /app
 
-COPY --from=builder /app/frontend .
+COPY --from=builder /app/backend .
 
 EXPOSE 8080
 
-CMD ["./frontend"]
+CMD ["./backend"]
