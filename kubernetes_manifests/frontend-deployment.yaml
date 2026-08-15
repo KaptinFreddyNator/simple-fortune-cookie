@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: docker.io/9tailedninko/fortune-frontend
+        image: docker.io/9tailedninko/fortune-frontend:latest
         resources:
           limits:
             memory: "128Mi"
