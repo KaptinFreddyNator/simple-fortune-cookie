@@ -4,7 +4,7 @@ metadata:
   name: frontend
 spec:
   selector:
-    app: frontend
+    run: frontend
   ports:
   - port: 8080
     targetPort: 8080
